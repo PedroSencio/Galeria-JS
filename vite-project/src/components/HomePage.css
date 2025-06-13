@@ -1,0 +1,286 @@
+body, #root {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    background-color: rgba(255, 250, 232, 1); 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#all {
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: rgba(255, 250, 232, 1); 
+    display: flex;
+    flex-direction: column;
+
+}
+.dock {
+    position: relative; /* Adicionado para garantir que o bottom-fotos seja posicionado em relação ao dock */
+    background-color: rgb(0, 0, 0);
+    border-radius: 15px;
+    height: 60px;
+    width: 70%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    z-index: 3;
+}
+
+
+.btn {
+    width: auto;
+    height: 50px;
+    border: none;
+    background: none;
+    color: white;
+    font-size: 17px;
+    transition: transform 0.1s ease-in-out;
+    cursor: pointer;
+    position: relative;
+    
+}
+.btn:hover {
+    transform: translateY(-8px) scale(1.2);
+    transition: transform 0.1s ease-in-out;
+}
+.btn.active::after {
+    content: '';
+    position: absolute;
+    bottom: 10px;
+    left: 0;
+    height: 2px;
+    background-color: white;
+    animation: tester 0.2s ease-in-out forwards;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}
+@keyframes tester {
+    from {
+        width: 0;
+        left: 50%;
+    }
+    to {
+        width: 100%;
+        left: 0;
+    }
+    
+}
+#bottom {
+    position: fixed;
+    top: 90%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 10%;
+}
+.top-inicio {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    width: 100%;
+    height: 25%;
+}
+#fotos {
+    height: 450px;
+}
+#mid {
+    width: 100%;
+    height: 60%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow-y: hidden; /* Permite rolagem vertical */
+}
+.top-fotos{
+    display: flex;
+    flex-direction: row;
+    margin-left: 20px;
+    height: 150px;
+    justify-content: space-between;
+    align-items: center;
+}
+.mid-fotos {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 20px; /* 20px entre colunas e linhas */
+    padding: 20px; /* 20px nas bordas */
+    justify-content: center; /* centraliza os itens no espaço restante */
+    width: 100%;
+    max-height: 700px;
+    box-sizing: border-box;
+}
+.mid-fotos1 {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 20px; /* 20px entre colunas e linhas */
+    justify-content: center; /* centraliza os itens no espaço restante */
+    width: 75%;
+    align-items: center;
+    height: 900px;
+    box-sizing: border-box;
+    overflow-y: auto;
+}
+
+.bottom-fotos{
+    position: absolute; /* Alterado para absolute */
+    right: 20px; /* Ajusta a posição ao lado direito */
+    top: 91.4%; /* Mantém alinhado na parte inferior */
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    height: 60px;
+    animation: animation-dock 0.9s ease-in-out forwards;
+    z-index: 1; /* Certifique-se de que o z-index seja maior que o dock */
+}
+.add-foto {
+    background-color: rgba(0, 2, 148, 0.834);
+    color: white;
+    border-radius: 15px;
+    border: none;
+    height: 60px;
+    width: 60px;
+    align-items: center;
+    justify-content: center;
+    font-size: 25px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    z-index: 1;
+    cursor: pointer;
+    transition: background-color 0.19s ease-in-out, transform 0.3s ease-in-out;
+}
+.add-foto:hover {
+    background-color: rgb(65, 66, 171);
+    transform: scale(1.20) translateY(-5px);
+    transition: background-color 0.3s ease-in-out, transform 0.19s ease-in-out;
+}
+.add-foto:active {
+    background-color: rgb(0, 0, 0);
+    transform: scale(1.20) translateY(-15px);
+    transition: background-color 0.19s ease-in-out, transform 0.1s ease-in-out;
+}
+@keyframes animation-dock {
+    from {
+        transform: translateX(-200px);
+        opacity: 0;
+        z-index: 1;
+    }
+    to {
+        transform: translateX(-55px);
+        opacity: 1;
+        z-index: 1;
+    }
+}
+.foto-item {
+    width: 180px;
+    height: 180px;
+    object-fit: cover;
+}
+.foto {
+    object-fit: cover;
+    width: 180px;
+    height: 180px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.1s ease-in-out;
+}
+.foto-item1 {
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+}
+.foto1 {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.1s ease-in-out;
+}
+.foto:hover {
+    transform: scale(1.1) translateY(-5px);
+    transition: transform 0.1s ease-in-out;
+}
+.album-item {
+    width: 90vw;
+    height: 200px;
+    background-color: rgba(211, 211, 211, 0.596);
+    display: flex;
+    flex-direction: row;
+    border-radius: 20px;
+    align-items: center;
+    transition: transform 0.2s ease-in-out;
+}
+.album-item:hover {
+    transform: scale(1.02);
+    transition: transform 0.2s ease-in-out;
+}
+.album-capa {
+    height: 180px;
+    width: 180px;
+    border-radius: 15px;
+}
+.albuns-list {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    gap: 20px;
+    height: 100%;
+}
+#left {
+    margin-left: 10px;
+}
+#right {
+    margin-left: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    height: 100%;
+    width: 600px;
+}
+.album-sem-capa {
+    width: 180px;
+    height: 180px;
+    background-color: rgba(211, 211, 211, 0.596);
+    display: flex;
+    flex-direction: column;
+    border-radius: 20px;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease-in-out;
+}
+.fotos-disponiveis {
+  position: fixed;
+  bottom: 60px;
+  left: 0;
+  right: 0;
+  background: white;
+  padding: 10px;
+  box-shadow: 0 -2px 10px rgba(0,0,0,0.2);
+  max-height: 40vh;
+  overflow-y: auto;
+}
+
+.foto-miniatura {
+  width: 100px;
+  margin: 5px;
+  cursor: pointer;
+  border: 2px solid transparent;
+}
+
+.foto-miniatura:hover {
+  border-color: blue;
+}
