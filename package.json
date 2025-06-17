@@ -11,9 +11,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "express": "^4.18.2",
+    "mime-types": "2.1.35",
     "cors": "^2.8.5",
     "express": "^5.1.0",
     "googleapis": "^150.0.1",
+    "mime-types": "^2.1.35",
     "multer": "^2.0.0",
     "nodemailer": "^7.0.3",
     "pg": "^8.16.0",
