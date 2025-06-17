@@ -8,13 +8,8 @@ export default function LoginTela () {
   const [senhaCadastro, setSenhaCadastro] = useState('');
   const [nomeLogin, setNomeLogin] = useState('');
   const [senhaLogin, setSenhaLogin] = useState('');
-  const [saltoLoginUsuario, setSaltoLoginUsuario] = useState(false);
-  const [saltoLoginSenha, setSaltoLoginSenha] = useState(false);
-  const [saltoCadastroUsuario, setSaltoCadastroUsuario] = useState(false);
-  const [saltoCadastroSenha, setSaltoCadastroSenha] = useState(false);
   const [fadeout, setFadeout] = useState(true);
-  const [animacao, setAnimacao] = useState(false);
-  const [animacaoBox, setAnimacaoBox] = useState(false);
+  const [emailCadastro, setEmailCadastro] = useState('');
   const navigate = useNavigate();
 
 function handleLogin(e) {
@@ -59,13 +54,14 @@ function handleCadastro(e) {
         fetch('/usuarios', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ nome: nomeCadastro, senha: senhaCadastro })
+            body: JSON.stringify({ nome: nomeCadastro, senha: senhaCadastro, email: emailCadastro })
         })
         .then(response => response.json())
         .then(data => {
-            alert(`Cadastro realizado com sucesso!\nUsuário: ${nomeCadastro}\nSenha: ${senhaCadastro}`);
+            alert(`Cadastro realizado com sucesso!\nUsuário: ${nomeCadastro}\nSenha: ${senhaCadastro}\nEmail: ${emailCadastro}`);
             setnomeCadastro('');
             setSenhaCadastro('');
+            setEmailCadastro('');
             setTrocar(false);
         })
         .catch(error => {
@@ -73,9 +69,83 @@ function handleCadastro(e) {
             console.error('Erro ao cadastrar:', error);
         });
 }
+    function boxEmail() {
+        const emailElement = document.getElementById('email');
+        const backElement = document.getElementById('back');
+
+        if (emailElement && backElement) {
+            emailElement.style.display = 'block';
+            backElement.style.display = 'block';
+            backElement.style.position = 'fixed';
+
+            document.body.classList.add('modal-active'); // Adiciona classe ao body
+        } else {
+            console.error('Elementos com IDs "email" ou "back" não encontrados no DOM.');
+        }
+    }
+
+    function closeModal() {
+        const emailElement = document.getElementById('email');
+        const backElement = document.getElementById('back');
+
+        if (emailElement && backElement) {
+            emailElement.style.display = 'none';
+            backElement.style.display = 'none';
+
+            document.body.classList.remove('modal-active'); // Remove classe do body
+        }
+    }
+
+  function email(e) {
+  e.preventDefault();
+  const email = document.getElementById('emailInput').value;
+
+  if (email === '') {
+    alert('Por favor, preencha o campo de email.');
+    return;
+  }
+
+  fetch('http://localhost:3001/email', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email: email })
+  })
+    .then(res => res.json())
+    .then(data => {
+      if (data.sucesso) {
+        alert('Instruções enviadas para o email!');
+        closeModal();
+      } else {
+        alert('Erro ao enviar email: ' + data.mensagem);
+      }
+    })
+    .catch(err => {
+      console.error('Erro ao enviar email:', err);
+      alert('Erro ao enviar email.');
+    });
+}
+
 
   return (
     <div className="sidebar">
+        <div id="back"  style={{ display: 'none', position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0, 0, 0, 0.5)', zIndex: 1 }}>
+        <div id="email" className="email-box" >
+            <h2 style={{ fontWeight: 'bold !important' }}>Recuperar Senha</h2>
+            <p>Digite seu email para receber instruções de recuperação:</p>
+            <form onSubmit={email} method="POST">
+                <input
+                    id="emailInput"
+                    value={emailCadastro}
+                    type="email"
+                    placeholder="Email"
+                    onChange={e => setEmailCadastro(e.target.value)}
+                    />
+<button type="submit" onClick={() => alert('Instruções enviadas!')}>Enviar</button>
+                <button type="button" onClick={() => closeModal()}>Fechar</button>
+            </form>
+
+        </div>
+        </div>
         {!trocarBox ? (
         <div>
             <div className="top">
@@ -98,9 +168,14 @@ function handleCadastro(e) {
                     </div>
                     <button className="btn-login" type="submit" onClick={handleLogin}><span>Login</span></button>
                 </form>
+                <div style={{ display: 'flex', justifyContent:'center', marginTop: '10px', width: '100%'}}>
                 <button className="btn-cadastro" onClick={() => setTrocar(true)}>
                     Não possuo uma conta 
                 </button>
+                <button className="btn-cadastro" onClick={() => boxEmail()}>
+                    Esqueci minha senha
+                </button>
+                </div>
             </div>
         </div>
         ) : (
@@ -119,6 +194,7 @@ function handleCadastro(e) {
             <div className="bottom">
                 <form onSubmit={handleCadastro}>
                     <input className="input" type="text" placeholder="Usuário" onChange={ e => setnomeCadastro(e.target.value)} value={nomeCadastro} />
+                    <input className="input" type="text" placeholder="Email" onChange={ e => setEmailCadastro(e.target.value)} value={emailCadastro} />
                     <input className="input" type="password" placeholder="Senha" onChange={ e => setSenhaCadastro(e.target.value)} value={senhaCadastro} />
                     <button className="btn-login" type="submit">Cadastrar</button>
                 </form>

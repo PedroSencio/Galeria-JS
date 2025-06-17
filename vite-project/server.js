@@ -8,6 +8,7 @@ import fs from 'fs';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import sharp from 'sharp';
+import nodemailer from 'nodemailer';
 
 const app = express();
 app.use(cors());
@@ -43,14 +44,14 @@ const upload = multer({ storage });
 app.post('/usuarios', async (req, res) => {
   // Garante que o corpo está sendo recebido como JSON
   console.log('req.body:', req.body);
-  const { nome, senha } = req.body || {};
-  if (!nome || !senha) {
-    return res.status(400).json({ error: 'Nome e senha são obrigatórios.' });
+  const { nome, senha, email } = req.body || {};
+  if (!nome || !senha || !email) {
+    return res.status(400).json({ error: 'Nome, senha e email são obrigatórios.' });
   }
   try {
     const result = await pool.query(
-      'INSERT INTO usuario (nome, senha) VALUES ($1, $2) RETURNING *',
-      [nome, senha]
+      'INSERT INTO usuario (nome, senha, email) VALUES ($1, $2, $3) RETURNING *',
+      [nome, senha, email]
     );
     res.status(201).json(result.rows[0]);
   } catch (err) {
@@ -325,6 +326,39 @@ app.post('/albuns', upload.single('capa'), async (req, res) => {
     console.error('Erro ao criar álbum:', err);
     res.status(500).json({ sucesso: false, mensagem: 'Erro interno ao criar álbum.' });
   }
+});
+
+app.post('/email', (req, res) => {
+  const { email } = req.body;
+
+  if (!email) {
+    return res.status(400).json({ sucesso: false, mensagem: 'Email não fornecido.' });
+  }
+
+  const transport = nodemailer.createTransport({
+    host: 'smtp.gmail.com',
+    port: 587,
+    secure: false,
+    auth: {
+      user: 'pedrosencio2309@gmail.com', // seu email
+      pass: 'prpl wnze jhvq yawg' // sua senha
+    }
+  });
+
+  const mailOptions = {
+    from: 'pedrosencio2309@gmail.com', // seu email
+    to: email,
+    subject: 'Oieee',
+    text: 'Seu amor te amaaa'
+  };
+
+  transport.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.error('Erro ao enviar email:', error);
+      return res.status(500).json({ sucesso: false, mensagem: 'Erro ao enviar email.' });
+    }
+    res.json({ sucesso: true, mensagem: 'Email enviado com sucesso!' });
+  });
 });
 
 
