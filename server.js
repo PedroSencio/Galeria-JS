@@ -340,9 +340,10 @@ app.post('/email', (req, res) => {
     port: 587,
     secure: false,
     auth: {
-      user: 'pedrosencio2309@gmail.com', // seu email
-      pass: 'prpl wnze jhvq yawg' // sua senha
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS
     }
+
   });
 
   const mailOptions = {
@@ -362,6 +363,8 @@ app.post('/email', (req, res) => {
 });
 
 
-app.listen(3001, () => {
-  console.log('Servidor rodando na porta 3001');
+const PORT = process.env.PORT || 3001;
+app.listen(PORT, () => {
+  console.log(`Servidor rodando na porta ${PORT}`);
 });
+
