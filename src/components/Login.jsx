@@ -105,7 +105,7 @@ function handleCadastro(e) {
     return;
   }
 
-  fetch('http://localhost:3001/email', {
+  fetch('https://galeria-js.onrender.com/email', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email: email })

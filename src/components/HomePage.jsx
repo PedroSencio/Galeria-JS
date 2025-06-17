@@ -18,7 +18,7 @@ export default function HomePage({ NomeLogin }) {
 
   const associarFotoAoAlbum = async (fotoId) => {
   try {
-    const response = await fetch('http://localhost:3001/associar-foto-album', {
+    const response = await fetch('https://galeria-js.onrender.com/associar-foto-album', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -51,7 +51,7 @@ export default function HomePage({ NomeLogin }) {
 
   const buscarFotosDoAlbum = async (albumId) => {
   try {
-    const response = await fetch(`http://localhost:3001/fotos?album_id=${albumId}`);
+    const response = await fetch(`https://galeria-js.onrender.com/fotos?album_id=${albumId}`);
     const data = await response.json();
     if (Array.isArray(data)) {
       setFotos(data);
@@ -69,7 +69,7 @@ export default function HomePage({ NomeLogin }) {
   setTrocarPagina('albumDetalhes');
 
   try {
-    const response = await fetch(`http://localhost:3001/fotos-album?album_id=${album.id}`);
+    const response = await fetch(`https://galeria-js.onrender.com/fotos-album?album_id=${album.id}`);
     const data = await response.json();
     setFotosDoAlbum(data);
   } catch (error) {
@@ -104,7 +104,7 @@ export default function HomePage({ NomeLogin }) {
       formData.append('usuario', usuario);
 
       try {
-        const response = await fetch('http://localhost:3001/add-capa-album', {
+        const response = await fetch('https://galeria-js.onrender.com/add-capa-album', {
           method: 'POST',
           body: formData
         });
@@ -129,7 +129,7 @@ export default function HomePage({ NomeLogin }) {
       formData.append('usuario', usuario);
 
       try {
-        const response = await fetch('http://localhost:3001/add-foto', {
+        const response = await fetch('https://galeria-js.onrender.com/add-foto', {
           method: 'POST',
           body: formData
         });
@@ -149,7 +149,7 @@ export default function HomePage({ NomeLogin }) {
     const usuario = localStorage.getItem('usuario');
     if (!usuario) return;
 
-    fetch(`http://localhost:3001/albuns?usuario=${encodeURIComponent(usuario)}`)
+    fetch(`https://galeria-js.onrender.com/albuns?usuario=${encodeURIComponent(usuario)}`)
       .then(res => res.json())
       .then(data => {
         setAlbuns(Array.isArray(data) ? data : []);
@@ -171,7 +171,7 @@ export default function HomePage({ NomeLogin }) {
   formData.append('usuario', usuario);
 
   try {
-    const response = await fetch('http://localhost:3001/add-foto-album', {
+    const response = await fetch('https://galeria-js.onrender.com/add-foto-album', {
       method: 'POST',
       body: formData
     });
@@ -190,7 +190,7 @@ export default function HomePage({ NomeLogin }) {
     const usuario = localStorage.getItem('usuario');
     if (!usuario) return;
 
-    fetch(`http://localhost:3001/fotos?usuario=${encodeURIComponent(usuario)}`)
+    fetch(`https://galeria-js.onrender.com/fotos?usuario=${encodeURIComponent(usuario)}`)
       .then(res => {
         if (!res.ok) throw new Error('Erro ao buscar fotos');
         return res.json();
@@ -223,7 +223,7 @@ export default function HomePage({ NomeLogin }) {
     }
 
     try {
-      const response = await fetch("http://localhost:3001/albuns", {
+      const response = await fetch("https://galeria-js.onrender.com/albuns", {
         method: "POST",
         body: formData
       });
