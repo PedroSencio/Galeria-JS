@@ -329,6 +329,7 @@ app.post('/albuns', upload.single('capa'), async (req, res) => {
     res.status(500).json({ sucesso: false, mensagem: 'Erro interno ao criar álbum.' });
   }
 });
+const tokens = {};
 
 app.post('/email', (req, res) => {
   const { email } = req.body;
