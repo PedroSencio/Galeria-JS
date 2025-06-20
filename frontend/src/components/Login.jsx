@@ -126,35 +126,7 @@ export default function LoginTela () {
   }
 
   useEffect(() => {
-    const mp = new MercadoPago('SUA_PUBLIC_KEY_PRODUCAO', {
-      locale: 'pt-BR'
-    });
-
-    const cardForm = mp.fields.create('cardForm', {
-      amount: 100, // valor do ingresso
-      iframe: true,
-      fields: {
-        cardholderName: { placeholder: 'Nome do titular' },
-        cardNumber: { placeholder: 'Número do cartão' },
-        expirationDate: { placeholder: 'MM/AA' },
-        securityCode: { placeholder: 'CVV' }
-      },
-      callbacks: {
-        onSubmit: async (event) => {
-          event.preventDefault();
-          try {
-            const { token } = await cardForm.submit();
-            console.log('Token do cartão:', token);
-            // Envie o token para o seu servidor para processar o pagamento
-          } catch (error) {
-            console.error('Erro ao gerar token:', error);
-          }
-        }
-      }
-    });
-
-    // Renderiza os campos no formulário
-    cardForm.render('#payment-form');
+    // Código anterior ao SDK do Mercado Pago será mantido.
   }, []);
 
   return (
