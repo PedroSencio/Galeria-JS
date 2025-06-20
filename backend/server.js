@@ -351,7 +351,7 @@ app.post('/email', (req, res) => {
     }
   });
 
-  const link = `https://seusite.com/redefinir-senha/${token}`;
+  const link = `https://galeria-js.onrender.com/redefinir-senha/${token}`;
   const mailOptions = {
     from: 'teste@gmail.com',
     to: email,
