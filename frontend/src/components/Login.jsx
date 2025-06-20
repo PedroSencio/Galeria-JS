@@ -4,6 +4,7 @@ import "./Login.css";
 
 export default function LoginTela () {
   const [trocarBox, setTrocar] = useState(false);
+  const [expandirBox, setExpandir] = useState(false);
   const [nomeCadastro, setnomeCadastro] = useState('');
   const [senhaCadastro, setSenhaCadastro] = useState('');
   const [nomeLogin, setNomeLogin] = useState('');
@@ -11,6 +12,10 @@ export default function LoginTela () {
   const [fadeout, setFadeout] = useState(true);
   const [emailCadastro, setEmailCadastro] = useState('');
   const navigate = useNavigate();
+  const [codigoGerado, setCodigoGerado] = useState('');
+  const [codigoDigitado, setCodigoDigitado] = useState('');
+  const [aguardandoCodigo, setAguardandoCodigo] = useState(false);
+
 
   function handleLogin(e) {
       e.preventDefault();
@@ -69,152 +74,169 @@ export default function LoginTela () {
               console.error('Erro ao cadastrar:', error);
           });
   }
-      function boxEmail() {
-          const emailElement = document.getElementById('email');
-          const backElement = document.getElementById('back');
-
-          if (emailElement && backElement) {
-              emailElement.style.display = 'block';
-              backElement.style.display = 'block';
-              backElement.style.position = 'fixed';
-
-              document.body.classList.add('modal-active'); // Adiciona classe ao body
-          } else {
-              console.error('Elementos com IDs "email" ou "back" não encontrados no DOM.');
-          }
-      }
-
-      function closeModal() {
-          const emailElement = document.getElementById('email');
-          const backElement = document.getElementById('back');
-
-          if (emailElement && backElement) {
-              emailElement.style.display = 'none';
-              backElement.style.display = 'none';
-
-              document.body.classList.remove('modal-active'); // Remove classe do body
-          }
-      }
 
     function email(e) {
-    e.preventDefault();
-    const email = document.getElementById('emailInput').value;
+  e.preventDefault();
+  const email = document.getElementById('emailInput').value;
 
-    //gera um código de verificacão
-    const caracteres = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-     let codigo = '';
-     for (let i = 0; i < 6; i++) {
-        const indice = Math.floor(Math.random() * caracteres.length);
-        codigo += caracteres[indice];
-        }
-
-    if (email === '') {
-      alert('Por favor, preencha o campo de email.');
-      return;
-    }
-
-    fetch('https://galeria-js.onrender.com/email', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: email, codigo: codigo })
-    })
-      .then(res => res.json())
-      .then(data => {
-        if (data.sucesso) {
-          alert('Instruções enviadas para o email!');
-          closeModal();
-        } else {
-          alert('Erro ao enviar email: ' + data.mensagem);
-        }
-      })
-      .catch(err => {
-        console.error('Erro ao enviar email:', err);
-        alert('Erro ao enviar email.');
-      });
+  const caracteres = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  let codigo = '';
+  for (let i = 0; i < 6; i++) {
+    const indice = Math.floor(Math.random() * caracteres.length);
+    codigo += caracteres[indice];
   }
+
+  if (email === '') {
+    alert('Por favor, preencha o campo de email.');
+    return;
+  }
+
+  fetch('https://galeria-js.onrender.com/email', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email: email, codigo: codigo })
+  })
+    .then(res => res.json())
+    .then(data => {
+      if (data.sucesso) {
+        alert('Instruções enviadas para o email!');
+        setCodigoGerado(codigo);
+        setAguardandoCodigo(true);
+      } else {
+        alert('Erro ao enviar email: ' + data.mensagem);
+      }
+    })
+    .catch(err => {
+      console.error('Erro ao enviar email:', err);
+      alert('Erro ao enviar email.');
+    });
+}
 
 
 
   return (
-    <div className="sidebar">
-        <div id="back"  style={{ display: 'none', position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0, 0, 0, 0.5)', zIndex: 1 }}>
-        <div id="email" className="email-box" >
-            <h2 style={{ fontWeight: 'bold !important' }}>Recuperar Senha</h2>
-            <p>Digite seu email para receber instruções de recuperação:</p>
-            <form onSubmit={email} method="POST">
-                <input
-                    id="emailInput"
-                    value={emailCadastro}
-                    type="email"
-                    placeholder="Email"
-                    onChange={e => setEmailCadastro(e.target.value)}
-                    />
-<button type="submit" onClick={() => alert('Instruções enviadas!')}>Enviar</button>
-                <button type="button" onClick={() => closeModal()}>Fechar</button>
-            </form>
+  <div className="sidebar">
+    {expandirBox ? (
+      <div
+        id="back"
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          zIndex: 1
+        }}
+      >
+        <div id="email" className="email-box">
+          <h2 style={{ fontWeight: 'bold', fontSize: '30px', fontFamily: 'Arial' }}>
+            Recuperar Senha
+          </h2>
+          <p style={{ fontFamily: 'Arial' }}>
+            Digite seu email para receber instruções de recuperação:
+          </p>
+          <form onSubmit={email} method="POST">
+            {!aguardandoCodigo ? (
+  <>
+    <input
+      id="emailInput"
+      value={emailCadastro}
+      type="email"
+      className="codigoInput"
+      placeholder="Email"
+      onChange={(e) => setEmailCadastro(e.target.value)}
+    />
+    <button className="botao_email" type="submit">Enviar</button>
+    <button className="botao_email0" type="button" onClick={() => {setExpandir(false)}}>Fechar</button>
+  </>
 
-        </div>
-        </div>
-        {!trocarBox ? (
-        <div>
-            <div className="top">
-                <div className="txt1">
-                    <h1>Seja bem-vindo(a) á</h1>
-                </div>
-                <div className="txt2"> 
-                    <h1>sua Galeria</h1>
-                </div>
-                <div className="logintxt">
-                    <h1>Log In</h1>
-                </div>
-            </div>
-            <div className="bottom">
-                <form onSubmit={handleLogin}>
-                    <input className="input" type="text" placeholder="Usuário" onChange={ e => setNomeLogin(e.target.value)} value={nomeLogin} />
-                    <input className="input" type="password" placeholder="Senha" onChange={ e => setSenhaLogin(e.target.value)} value={senhaLogin} />
-                    <div className="remember">
-                        <input className="checkbox" type="checkbox" /> Lembre de mim
-                    </div>
-                    <button className="btn-login" type="submit" onClick={handleLogin}><span>Login</span></button>
-                </form>
-                <div style={{ display: 'flex', justifyContent:'center', marginTop: '10px', width: '100%'}}>
-                <button className="btn-cadastro" onClick={() => setTrocar(true)}>
-                    Não possuo uma conta 
-                </button>
-                <button className="btn-cadastro" onClick={() => boxEmail()}>
-                    Esqueci minha senha
-                </button>
-                </div>
-            </div>
-        </div>
-        ) : (
-        <div>
-            <div className="top">
-                <div className="txt1">
-                    <h1>Seja bem-vindo(a) á</h1>
-                </div>
-                <div className="txt2"> 
-                    <h1>sua Galeria</h1>
-                </div>
-                <div className="logintxt">
-                    <h1>Cadastro</h1>
-                </div>
-            </div>
-            <div className="bottom">
-                <form onSubmit={handleCadastro}>
-                    <input className="input" type="text" placeholder="Usuário" onChange={ e => setnomeCadastro(e.target.value)} value={nomeCadastro} />
-                    <input className="input" type="text" placeholder="Email" onChange={ e => setEmailCadastro(e.target.value)} value={emailCadastro} />
-                    <input className="input" type="password" placeholder="Senha" onChange={ e => setSenhaCadastro(e.target.value)} value={senhaCadastro} />
-                    <button className="btn-login" type="submit">Cadastrar</button>
-                </form>
-                <button className="btn-cadastro" onClick={() => setTrocar(false)}>
-                    Já possuo uma conta
-                </button>
-            </div>
-        </div>
-        )}
-    </div>
-    
-  );
   
-}
+) : (
+  <>
+    <input
+      value={codigoDigitado}
+      type="text"
+      className="codigoInput"
+      placeholder="Digite o código recebido"
+      onChange={(e) => setCodigoDigitado(e.target.value)}
+      style={{ textTransform: 'uppercase', backgroundColor: '#f0f0f0', border: '1px solid #ccc', padding: '10px', borderRadius: '5px' }}
+    />
+    <button
+      className="botao_email"
+      type="button"
+      onClick={() => {
+        if (codigoDigitado === codigoGerado) {
+          alert('Código verificado com sucesso!');
+          setAguardandoCodigo(false);
+          setCodigoGerado('');
+          setCodigoDigitado('');
+          setExpandir(false);
+        } else {
+          alert('Código incorreto. Verifique e tente novamente.');
+        }
+      }}
+    >
+      Verificar Código
+    </button>
+  </>
+)}
+          </form>
+        </div>
+      </div>
+    ) : null}
+
+    {!trocarBox ? (
+      <div>
+        <div className="top">
+          <div className="txt1">
+            <h1>Seja bem-vindo(a) á</h1>
+          </div>
+          <div className="txt2">
+            <h1>sua Galeria</h1>
+          </div>
+          <div className="logintxt">
+            <h1>Log In</h1>
+          </div>
+        </div>
+        <div className="bottom">
+          <form onSubmit={handleLogin}>
+            <input className="input" type="text" placeholder="Usuário" onChange={e => setNomeLogin(e.target.value)} value={nomeLogin} />
+            <input className="input" type="password" placeholder="Senha" onChange={e => setSenhaLogin(e.target.value)} value={senhaLogin} />
+            <div className="remember">
+              <input className="checkbox" type="checkbox" /> Lembre de mim
+            </div>
+            <button className="btn-login" type="submit"><span>Login</span></button>
+          </form>
+          <div style={{ display: 'flex', justifyContent: 'center', marginTop: '10px', width: '100%' }}>
+            <button className="btn-cadastro" onClick={() => setTrocar(true)}>Não possuo uma conta</button>
+            <button className="btn-cadastro" onClick={() => setExpandir(true)}>Esqueci minha senha</button>
+          </div>
+        </div>
+      </div>
+    ) : (
+      <div>
+        <div className="top">
+          <div className="txt1">
+            <h1>Seja bem-vindo(a) á</h1>
+          </div>
+          <div className="txt2">
+            <h1>sua Galeria</h1>
+          </div>
+          <div className="logintxt">
+            <h1>Cadastro</h1>
+          </div>
+        </div>
+        <div className="bottom">
+          <form onSubmit={handleCadastro}>
+            <input className="input" type="text" placeholder="Usuário" onChange={e => setnomeCadastro(e.target.value)} value={nomeCadastro} />
+            <input className="input" type="text" placeholder="Email" onChange={e => setEmailCadastro(e.target.value)} value={emailCadastro} />
+            <input className="input" type="password" placeholder="Senha" onChange={e => setSenhaCadastro(e.target.value)} value={senhaCadastro} />
+            <button className="btn-login" type="submit">Cadastrar</button>
+          </form>
+          <button className="btn-cadastro" onClick={() => setTrocar(false)}>Já possuo uma conta</button>
+        </div>
+</div>
+)}
+    </div>
+    )}

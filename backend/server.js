@@ -329,28 +329,31 @@ app.post('/albuns', upload.single('capa'), async (req, res) => {
 });
 
 app.post('/email', (req, res) => {
-  const { email, codigo } = req.body;
+  const { email } = req.body;
 
   if (!email) {
     return res.status(400).json({ sucesso: false, mensagem: 'Email não fornecido.' });
   }
 
+  const token = uuidv4();
+  tokens[token] = { email, expires: Date.now() + 15 * 60 * 1000 }; // expira em 15 minutos
+
   const transport = nodemailer.createTransport({
     host: 'smtp.gmail.com',
     port: 587,
-    secure: false,   
+    secure: false,
     auth: {
       user: process.env.EMAIL_USER,
       pass: process.env.EMAIL_PASS
     }
-
   });
 
+  const link = `https://seusite.com/redefinir-senha/${token}`;
   const mailOptions = {
-    from: 'teste@gmail.com', // seu email
+    from: 'teste@gmail.com',
     to: email,
     subject: 'Recuperação de Conta',
-    text: 'Aqui está seu código de recuperação: ' + codigo,
+    text: `Clique no link para redefinir sua senha: ${link}\nEste link expira em 15 minutos.`
   };
 
   transport.sendMail(mailOptions, (error, info) => {
@@ -362,6 +365,33 @@ app.post('/email', (req, res) => {
   });
 });
 
+app.get('/verificar-token/:token', (req, res) => {
+  const { token } = req.params;
+  const data = tokens[token];
+
+  if (data && data.expires > Date.now()) {
+    res.json({ valido: true });
+  } else {
+    res.json({ valido: false });
+  }
+});
+
+app.post('/redefinir-senha', async (req, res) => {
+  const { token, novaSenha } = req.body;
+  const data = tokens[token];
+
+  if (!data || data.expires < Date.now()) {
+    return res.json({ sucesso: false, mensagem: 'Token inválido ou expirado' });
+  }
+
+  try {
+    await pool.query('UPDATE usuario SET senha = $1 WHERE email = $2', [novaSenha, data.email]);
+    delete tokens[token];
+    res.json({ sucesso: true });
+  } catch (err) {
+    console.error('Erro ao redefinir senha:', err);
+    res.status(500).json({ sucesso: false, mensagem: 'Erro ao redefinir senha.' });
+  }});
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
