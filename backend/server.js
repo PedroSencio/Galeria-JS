@@ -10,7 +10,6 @@ import { dirname } from 'path';
 import sharp from 'sharp';
 import nodemailer from 'nodemailer';
 import { v4 as uuidv4 } from 'uuid';
-import { fileURLToPath } from 'url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const app = express();
