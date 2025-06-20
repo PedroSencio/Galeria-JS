@@ -395,12 +395,6 @@ app.post('/redefinir-senha', async (req, res) => {
     res.status(500).json({ sucesso: false, mensagem: 'Erro ao redefinir senha.' });
   }});
 
-app.use(express.static(path.join(__dirname, 'public'))); // ou o diretório de build do React
-
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html')); // ou 'build' se estiver usando React
-});
-
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Servidor rodando na porta ${PORT}`);
