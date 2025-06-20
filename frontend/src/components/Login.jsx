@@ -125,9 +125,7 @@ export default function LoginTela () {
       });
   }
 
-  useEffect(() => {
-    // Código anterior ao SDK do Mercado Pago será mantido.
-  }, []);
+
 
   return (
     <div className="sidebar">
