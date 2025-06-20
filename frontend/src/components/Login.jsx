@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Login.css";
-import { v4 as uuidv4 } from 'uuid';
 
 export default function LoginTela () {
   const [trocarBox, setTrocar] = useState(false);
@@ -120,7 +119,6 @@ export default function LoginTela () {
     {expandirBox ? (
       <div
         id="back"
-        onClick={() => setExpandir(false)}
         style={{
           position: 'fixed',
           top: 0,
