@@ -1,52 +1,47 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
 
 export default function RedefinirSenha() {
   const { token } = useParams();
-  const [novaSenha, setNovaSenha] = useState('');
-  const [valido, setValido] = useState(false);
-  const navigate = useNavigate();
+  const [valido, setValido] = useState(null);
 
   useEffect(() => {
-    fetch(`https://seusite.com/verificar-token/${token}`)
-      .then(res => res.json())
-      .then(data => {
-        if (data.valido) setValido(true);
-        else alert("Link expirado ou inválido");
-      });
+    axios.get(`https://galeria-js.onrender.com/verificar-token/${token}`)
+      .then(res => setValido(res.data.valido))
+      .catch(() => setValido(false));
   }, [token]);
 
-  function redefinirSenha(e) {
+  const alterarSenha = (e) => {
     e.preventDefault();
+    const novaSenha = e.target.elements[0].value;
 
-    fetch('https://seusite.com/redefinir-senha', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ token, novaSenha })
+    axios.post('https://galeria-js.onrender.com/redefinir-senha', {
+      token,
+      novaSenha,
     })
-      .then(res => res.json())
-      .then(data => {
-        if (data.sucesso) {
-          alert('Senha redefinida com sucesso!');
-          navigate('/');
+      .then(res => {
+        if (res.data.sucesso) {
+          alert('Senha alterada com sucesso!');
         } else {
-          alert('Erro: ' + data.mensagem);
+          alert('Erro ao alterar a senha. Tente novamente.');
         }
+      })
+      .catch(() => {
+        alert('Erro ao alterar a senha. Tente novamente.');
       });
-  }
+  };
 
-  if (!valido) return <p>Verificando token...</p>;
+  if (valido === null) return <p>Verificando token...</p>;
+  if (!valido) return <p>Token inválido ou expirado.</p>;
 
   return (
-    <form onSubmit={redefinirSenha}>
+    <div>
       <h2>Redefinir Senha</h2>
-      <input
-        type="password"
-        value={novaSenha}
-        onChange={(e) => setNovaSenha(e.target.value)}
-        placeholder="Nova senha"
-      />
-      <button type="submit">Salvar</button>
-    </form>
+      <form onSubmit={alterarSenha}>
+        <input type="password" placeholder="Nova senha" required />
+        <button type="submit">Salvar nova senha</button>
+      </form>
+    </div>
   );
 }

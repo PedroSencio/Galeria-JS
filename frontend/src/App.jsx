@@ -9,6 +9,7 @@ export default function App() {
     <Routes>
       <Route path="/" element={<LoginTela />} />
       <Route path="/home/:usuario" element={<HomePage />} />
+       <Route path="/redefinir-senha/:token" element={<RedefinirSenha />} />
     </Routes>
   );
 }
