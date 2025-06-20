@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Login.css";
 
@@ -12,119 +12,150 @@ export default function LoginTela () {
   const [emailCadastro, setEmailCadastro] = useState('');
   const navigate = useNavigate();
 
-function handleLogin(e) {
-    e.preventDefault();
-    if (nomeLogin === ''|| senhaLogin === '')
-        return alert('Campos vazios!');
-    else
-        fetch('/login', { method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nome: nomeLogin, senha: senhaLogin })
-    })
-        .then(response => response.json())
-        .then(data => {
-            if (data.sucesso) {
-                localStorage.setItem('usuario', nomeLogin);
-                alert(`Login realizado com sucesso!\nUsuário: ${nomeLogin}\nSenha: ${senhaLogin}`);
-                setFadeout(false); // ativa a animação de fade
-                setTimeout(() => {
-                    setNomeLogin('');
-                    setSenhaLogin('');
-                    navigate(`/home/${nomeLogin}`); // troca de rota após animação
-                }, 500); // ajuste o tempo conforme a duração da animação CSS
-                console.log('Login realizado com sucesso:', data);
-            }
-            else {
-                alert('Usuário ou senha incorretos!');
-            }
-        }
-        )
-    .catch(error => {
-        console.error('Erro ao realizar login:', error);
-        alert('Erro ao realizar login. Tente novamente mais tarde.');
-    }
-    );
-}
-
-function handleCadastro(e) {
-    e.preventDefault();
-    if (nomeCadastro === '' || senhaCadastro === '')
-        return alert("Preencha todos os campos!");
-    else
-        fetch('/usuarios', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ nome: nomeCadastro, senha: senhaCadastro, email: emailCadastro })
-        })
-        .then(response => response.json())
-        .then(data => {
-            alert(`Cadastro realizado com sucesso!\nUsuário: ${nomeCadastro}\nSenha: ${senhaCadastro}\nEmail: ${emailCadastro}`);
-            setnomeCadastro('');
-            setSenhaCadastro('');
-            setEmailCadastro('');
-            setTrocar(false);
-        })
-        .catch(error => {
-            alert('Erro ao cadastrar usuário.');
-            console.error('Erro ao cadastrar:', error);
-        });
-}
-    function boxEmail() {
-        const emailElement = document.getElementById('email');
-        const backElement = document.getElementById('back');
-
-        if (emailElement && backElement) {
-            emailElement.style.display = 'block';
-            backElement.style.display = 'block';
-            backElement.style.position = 'fixed';
-
-            document.body.classList.add('modal-active'); // Adiciona classe ao body
-        } else {
-            console.error('Elementos com IDs "email" ou "back" não encontrados no DOM.');
-        }
-    }
-
-    function closeModal() {
-        const emailElement = document.getElementById('email');
-        const backElement = document.getElementById('back');
-
-        if (emailElement && backElement) {
-            emailElement.style.display = 'none';
-            backElement.style.display = 'none';
-
-            document.body.classList.remove('modal-active'); // Remove classe do body
-        }
-    }
-
-  function email(e) {
-  e.preventDefault();
-  const email = document.getElementById('emailInput').value;
-
-  if (email === '') {
-    alert('Por favor, preencha o campo de email.');
-    return;
+  function handleLogin(e) {
+      e.preventDefault();
+      if (nomeLogin === ''|| senhaLogin === '')
+          return alert('Campos vazios!');
+      else
+          fetch('/login', { method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ nome: nomeLogin, senha: senhaLogin })
+      })
+          .then(response => response.json())
+          .then(data => {
+              if (data.sucesso) {
+                  localStorage.setItem('usuario', nomeLogin);
+                  alert(`Login realizado com sucesso!\nUsuário: ${nomeLogin}\nSenha: ${senhaLogin}`);
+                  setFadeout(false); // ativa a animação de fade
+                  setTimeout(() => {
+                      setNomeLogin('');
+                      setSenhaLogin('');
+                      navigate(`/home/${nomeLogin}`); // troca de rota após animação
+                  }, 500); // ajuste o tempo conforme a duração da animação CSS
+                  console.log('Login realizado com sucesso:', data);
+              }
+              else {
+                  alert('Usuário ou senha incorretos!');
+              }
+          }
+          )
+      .catch(error => {
+          console.error('Erro ao realizar login:', error);
+          alert('Erro ao realizar login. Tente novamente mais tarde.');
+      }
+      );
   }
 
-  fetch('https://galeria-js.onrender.com/email', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email: email })
-  })
-    .then(res => res.json())
-    .then(data => {
-      if (data.sucesso) {
-        alert('Instruções enviadas para o email!');
-        closeModal();
-      } else {
-        alert('Erro ao enviar email: ' + data.mensagem);
-      }
-    })
-    .catch(err => {
-      console.error('Erro ao enviar email:', err);
-      alert('Erro ao enviar email.');
-    });
-}
+  function handleCadastro(e) {
+      e.preventDefault();
+      if (nomeCadastro === '' || senhaCadastro === '')
+          return alert("Preencha todos os campos!");
+      else
+          fetch('/usuarios', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ nome: nomeCadastro, senha: senhaCadastro, email: emailCadastro })
+          })
+          .then(response => response.json())
+          .then(data => {
+              alert(`Cadastro realizado com sucesso!\nUsuário: ${nomeCadastro}\nSenha: ${senhaCadastro}\nEmail: ${emailCadastro}`);
+              setnomeCadastro('');
+              setSenhaCadastro('');
+              setEmailCadastro('');
+              setTrocar(false);
+          })
+          .catch(error => {
+              alert('Erro ao cadastrar usuário.');
+              console.error('Erro ao cadastrar:', error);
+          });
+  }
+      function boxEmail() {
+          const emailElement = document.getElementById('email');
+          const backElement = document.getElementById('back');
 
+          if (emailElement && backElement) {
+              emailElement.style.display = 'block';
+              backElement.style.display = 'block';
+              backElement.style.position = 'fixed';
+
+              document.body.classList.add('modal-active'); // Adiciona classe ao body
+          } else {
+              console.error('Elementos com IDs "email" ou "back" não encontrados no DOM.');
+          }
+      }
+
+      function closeModal() {
+          const emailElement = document.getElementById('email');
+          const backElement = document.getElementById('back');
+
+          if (emailElement && backElement) {
+              emailElement.style.display = 'none';
+              backElement.style.display = 'none';
+
+              document.body.classList.remove('modal-active'); // Remove classe do body
+          }
+      }
+
+    function email(e) {
+    e.preventDefault();
+    const email = document.getElementById('emailInput').value;
+
+    if (email === '') {
+      alert('Por favor, preencha o campo de email.');
+      return;
+    }
+
+    fetch('https://galeria-js.onrender.com/email', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: email })
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.sucesso) {
+          alert('Instruções enviadas para o email!');
+          closeModal();
+        } else {
+          alert('Erro ao enviar email: ' + data.mensagem);
+        }
+      })
+      .catch(err => {
+        console.error('Erro ao enviar email:', err);
+        alert('Erro ao enviar email.');
+      });
+  }
+
+  useEffect(() => {
+    const mp = new MercadoPago('SUA_PUBLIC_KEY_PRODUCAO', {
+      locale: 'pt-BR'
+    });
+
+    const cardForm = mp.fields.create('cardForm', {
+      amount: 100, // valor do ingresso
+      iframe: true,
+      fields: {
+        cardholderName: { placeholder: 'Nome do titular' },
+        cardNumber: { placeholder: 'Número do cartão' },
+        expirationDate: { placeholder: 'MM/AA' },
+        securityCode: { placeholder: 'CVV' }
+      },
+      callbacks: {
+        onSubmit: async (event) => {
+          event.preventDefault();
+          try {
+            const { token } = await cardForm.submit();
+            console.log('Token do cartão:', token);
+            // Envie o token para o seu servidor para processar o pagamento
+          } catch (error) {
+            console.error('Erro ao gerar token:', error);
+          }
+        }
+      }
+    });
+
+    // Renderiza os campos no formulário
+    cardForm.render('#payment-form');
+  }, []);
 
   return (
     <div className="sidebar">
@@ -204,6 +235,7 @@ function handleCadastro(e) {
             </div>
         </div>
         )}
+        <div id="payment-form"></div>
     </div>
     
   );
