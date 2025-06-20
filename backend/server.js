@@ -10,7 +10,8 @@ import { dirname } from 'path';
 import sharp from 'sharp';
 import nodemailer from 'nodemailer';
 import { v4 as uuidv4 } from 'uuid';
-
+import { fileURLToPath } from 'url';
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const app = express();
 app.use(cors());
@@ -395,6 +396,12 @@ app.post('/redefinir-senha', async (req, res) => {
     console.error('Erro ao redefinir senha:', err);
     res.status(500).json({ sucesso: false, mensagem: 'Erro ao redefinir senha.' });
   }});
+
+app.use(express.static(path.join(__dirname, 'public'))); // ou o diretório de build do React
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html')); // ou 'build' se estiver usando React
+});
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
