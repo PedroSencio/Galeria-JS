@@ -329,7 +329,7 @@ app.post('/albuns', upload.single('capa'), async (req, res) => {
 });
 
 app.post('/email', (req, res) => {
-  const { email } = req.body;
+  const { email, codigo } = req.body;
 
   if (!email) {
     return res.status(400).json({ sucesso: false, mensagem: 'Email não fornecido.' });
@@ -347,10 +347,10 @@ app.post('/email', (req, res) => {
   });
 
   const mailOptions = {
-    from: 'pedrosencio2309@gmail.com', // seu email
+    from: 'teste@gmail.com', // seu email
     to: email,
-    subject: 'Oieee',
-    text: 'Seu amor te amaaa'
+    subject: 'Recuperação de Conta',
+    text: 'Aqui está seu código de recuperação: ' + codigo,
   };
 
   transport.sendMail(mailOptions, (error, info) => {

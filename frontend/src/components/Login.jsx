@@ -100,6 +100,14 @@ export default function LoginTela () {
     e.preventDefault();
     const email = document.getElementById('emailInput').value;
 
+    //gera um código de verificacão
+    const caracteres = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+     let codigo = '';
+     for (let i = 0; i < 6; i++) {
+        const indice = Math.floor(Math.random() * caracteres.length);
+        codigo += caracteres[indice];
+        }
+
     if (email === '') {
       alert('Por favor, preencha o campo de email.');
       return;
@@ -108,7 +116,7 @@ export default function LoginTela () {
     fetch('https://galeria-js.onrender.com/email', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: email })
+      body: JSON.stringify({ email: email, codigo: codigo })
     })
       .then(res => res.json())
       .then(data => {
@@ -205,7 +213,6 @@ export default function LoginTela () {
             </div>
         </div>
         )}
-        <div id="payment-form"></div>
     </div>
     
   );
