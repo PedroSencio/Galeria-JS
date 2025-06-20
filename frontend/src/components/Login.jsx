@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Login.css";
+import { v4 as uuidv4 } from 'uuid';
 
 export default function LoginTela () {
   const [trocarBox, setTrocar] = useState(false);
