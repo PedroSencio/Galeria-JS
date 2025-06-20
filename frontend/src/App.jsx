@@ -3,7 +3,7 @@ import { Routes, Route } from 'react-router-dom';
 import './App.css';
 import HomePage from './components/HomePage';
 import LoginTela from './components/Login';
-import RedefinirSenha from './pages/RedefinirSenha'; // ou o caminho correto
+import RedefinirSenha from './RedefinirSenha'; // ou o caminho correto
 
 
 export default function App() {
