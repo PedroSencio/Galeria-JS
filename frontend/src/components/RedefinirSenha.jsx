@@ -16,10 +16,7 @@ export default function RedefinirSenha() {
     e.preventDefault();
     const novaSenha = e.target.elements[0].value;
 
-    axios.post('https://galeria-js.onrender.com/redefinir-senha', {
-      token,
-      novaSenha,
-    })
+    axios.post(`https://galeria-js.onrender.com/redefinir-senha/${token}`, { senha: novaSenha })
       .then(res => {
         if (res.data.sucesso) {
           alert('Senha alterada com sucesso!');
