@@ -119,6 +119,7 @@ export default function LoginTela () {
     {expandirBox ? (
       <div
         id="back"
+        onClick={() => setExpandir(false)}
         style={{
           position: 'fixed',
           top: 0,

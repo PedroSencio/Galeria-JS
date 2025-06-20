@@ -336,7 +336,7 @@ app.post('/email', (req, res) => {
   }
 
   const token = uuidv4();
-  tokens[token] = { email, expires: Date.now() + 15 * 60 * 1000 }; // expira em 15 minutos
+  tokens[token] = { email, expires: Date.now() + 5 * 60 * 1000 }; // expira em 15 minutos
 
   const transport = nodemailer.createTransport({
     host: 'smtp.gmail.com',
@@ -353,7 +353,7 @@ app.post('/email', (req, res) => {
     from: 'teste@gmail.com',
     to: email,
     subject: 'Recuperação de Conta',
-    text: `Clique no link para redefinir sua senha: ${link}\nEste link expira em 15 minutos.`
+    text: `Clique no link para redefinir sua senha: ${link}\nEste link expira em 5 minutos.`
   };
 
   transport.sendMail(mailOptions, (error, info) => {
