@@ -81,7 +81,7 @@ export default function LoginTela () {
 
   const caracteres = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
   let codigo = '';
-  for (let i = 0; i < 6; i++) {
+  for (let i = 0; i < 4; i++) {
     const indice = Math.floor(Math.random() * caracteres.length);
     codigo += caracteres[indice];
   }

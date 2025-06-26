@@ -337,8 +337,8 @@ app.post('/email', (req, res) => {
     return res.status(400).json({ sucesso: false, mensagem: 'Email não fornecido.' });
   }
 
-  const token = uuidv4();
-  tokens[token] = { email, expires: Date.now() + 5 * 60 * 1000 }; // expira em 15 minutos
+  const token = Math.floor(10000 + Math.random() * 90000).toString(); // Gera código de 5 dígitos
+  tokens[token] = { email, expires: Date.now() + 5 * 60 * 1000 }; // expira em 5 minutos
 
   const transport = nodemailer.createTransport({
     host: 'smtp.gmail.com',
@@ -355,7 +355,7 @@ app.post('/email', (req, res) => {
     from: 'teste@gmail.com',
     to: email,
     subject: 'Recuperação de Conta',
-    text: `Aqui está o código para recuperação de conta: ${token}`,
+    text: `Seu código de recuperação de conta é: ${token}. Este código expira em 5 minutos.`,
   };
 
   transport.sendMail(mailOptions, (error, info) => {
