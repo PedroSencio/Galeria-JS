@@ -355,7 +355,7 @@ app.post('/email', (req, res) => {
     from: 'teste@gmail.com',
     to: email,
     subject: 'Recuperação de Conta',
-    text: `Clique no link para redefinir sua senha: ${link}\nEste link expira em 5 minutos.`
+    text: `Aqui está o código para recuperação de conta: ${token}`,
   };
 
   transport.sendMail(mailOptions, (error, info) => {
