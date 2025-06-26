@@ -337,7 +337,15 @@ app.post('/email', (req, res) => {
     return res.status(400).json({ sucesso: false, mensagem: 'Email não fornecido.' });
   }
 
-  const token = Math.floor(10000 + Math.random() * 90000).toString(); // Gera código de 5 dígitos
+  // Gera um token único de 4 caracteres alfanuméricos
+  const caracteres = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  let token = '';
+  for (let i = 0; i < 4; i++) {
+    const indice = Math.floor(Math.random() * caracteres.length);
+    token += caracteres[indice];
+  }
+
+  // Armazena o token associado ao email
   tokens[token] = { email, expires: Date.now() + 5 * 60 * 1000 }; // expira em 5 minutos
 
   const transport = nodemailer.createTransport({
@@ -350,7 +358,6 @@ app.post('/email', (req, res) => {
     }
   });
 
-  const link = `https://galeria-js.onrender.com/redefinir-senha/${token}`;
   const mailOptions = {
     from: 'teste@gmail.com',
     to: email,
@@ -363,23 +370,49 @@ app.post('/email', (req, res) => {
       console.error('Erro ao enviar email:', error);
       return res.status(500).json({ sucesso: false, mensagem: 'Erro ao enviar email.' });
     }
-    res.json({ sucesso: true, mensagem: 'Email enviado com sucesso!' });
+    res.json({ sucesso: true, mensagem: 'Email enviado com sucesso!', token: token });
   });
 });
 
-app.get('/verificar-token/:token', (req, res) => {
-  const { token } = req.params;
-  const data = tokens[token];
+app.post('/verificar-codigo', (req, res) => {
+  const { codigoDigitado } = req.body;
 
-  if (data && data.expires > Date.now()) {
-    res.json({ valido: true });
-  } else {
-    res.json({ valido: false });
+  if (!codigoDigitado) {
+    return res.status(400).json({ valido: false, mensagem: 'Código não fornecido.' });
   }
+
+  // Verifica se o código existe e não expirou
+  const data = tokens[codigoDigitado];
+  
+  if (!data) {
+    return res.json({ valido: false, mensagem: 'Código inválido.' });
+  }
+
+  if (data.expires < Date.now()) {
+    delete tokens[codigoDigitado]; // Remove código expirado
+    return res.json({ valido: false, mensagem: 'Código expirado.' });
+  }
+
+  // Código válido
+  res.json({ valido: true, email: data.email });
 });
+
+app.get('/verificar-token/:token', (req, res) => {
+  const {token} = req.params;
+  const codigo = req.query.codigo;
+
+  const resultado = codigoDigitado === codigoCorreto;
+  res.json({ valido: resultado }); // { "valido": true } ou false
+});
+
 
 app.post('/redefinir-senha', async (req, res) => {
   const { token, novaSenha } = req.body;
+  
+  if (!token || !novaSenha) {
+    return res.status(400).json({ sucesso: false, mensagem: 'Token e nova senha são obrigatórios.' });
+  }
+
   const data = tokens[token];
 
   if (!data || data.expires < Date.now()) {
@@ -388,12 +421,13 @@ app.post('/redefinir-senha', async (req, res) => {
 
   try {
     await pool.query('UPDATE usuario SET senha = $1 WHERE email = $2', [novaSenha, data.email]);
-    delete tokens[token];
-    res.json({ sucesso: true });
+    delete tokens[token]; // Remove o token após o uso
+    res.json({ sucesso: true, mensagem: 'Senha redefinida com sucesso!' });
   } catch (err) {
     console.error('Erro ao redefinir senha:', err);
     res.status(500).json({ sucesso: false, mensagem: 'Erro ao redefinir senha.' });
-  }});
+  }
+});
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {

@@ -79,13 +79,6 @@ export default function LoginTela () {
   e.preventDefault();
   const email = document.getElementById('emailInput').value;
 
-  const caracteres = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-  let codigo = '';
-  for (let i = 0; i < 4; i++) {
-    const indice = Math.floor(Math.random() * caracteres.length);
-    codigo += caracteres[indice];
-  }
-
   if (email === '') {
     alert('Por favor, preencha o campo de email.');
     return;
@@ -94,13 +87,13 @@ export default function LoginTela () {
   fetch('https://galeria-js.onrender.com/email', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email: email, codigo: codigo })
+    body: JSON.stringify({ email: email })
   })
     .then(res => res.json())
     .then(data => {
       if (data.sucesso) {
         alert('Instruções enviadas para o email!');
-        setCodigoGerado(codigo);
+        setCodigoGerado(data.token); // Armazena o token gerado pelo backend
         setAguardandoCodigo(true);
       } else {
         alert('Erro ao enviar email: ' + data.mensagem);
@@ -111,6 +104,43 @@ export default function LoginTela () {
       alert('Erro ao enviar email.');
     });
 }
+
+  async function handleChave(e) {
+    e.preventDefault();
+
+    if (codigoDigitado === '') {
+      alert('Por favor, preencha o campo de código.');
+      return;
+    }
+
+    try {
+      const resposta = await fetch('https://galeria-js.onrender.com/verificar-codigo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          codigoDigitado: codigoDigitado
+        })
+      });
+
+      if (!resposta.ok) {
+        throw new Error('Falha na requisição: ' + resposta.status);
+      }
+
+      const dados = await resposta.json();
+
+      if (dados.valido) {
+        alert('Código verificado com sucesso! Você pode redefinir sua senha.');
+        navigate('/redefinir-senha');
+        setExpandir(false);
+        setAguardandoCodigo(false);
+      } else {
+        alert('Código inválido. Tente novamente.');
+      }
+    } catch (erro) {
+      console.error(erro);
+      alert('Ocorreu um erro. Tente novamente mais tarde.');
+    }
+  }
 
 
 
@@ -150,35 +180,18 @@ export default function LoginTela () {
     <button className="botao_email" type="submit">Enviar</button>
     <button className="botao_email0" type="button" onClick={() => {setExpandir(false)}}>Fechar</button>
   </>
-
-  
 ) : (
   <>
     <input
+      id="codigoInput"
       value={codigoDigitado}
       type="text"
       className="codigoInput"
-      placeholder="Digite o código recebido"
+      placeholder="Código de verificação"
       onChange={(e) => setCodigoDigitado(e.target.value)}
-      style={{ textTransform: 'uppercase', backgroundColor: '#f0f0f0', border: '1px solid #ccc', padding: '10px', borderRadius: '5px' }}
     />
-    <button
-      className="botao_email"
-      type="button"
-      onClick={() => {
-        if (codigoDigitado === codigoGerado) {
-          alert('Código verificado com sucesso!');
-          setAguardandoCodigo(false);
-          setCodigoGerado('');
-          setCodigoDigitado('');
-          setExpandir(false);
-        } else {
-          alert('Código incorreto. Verifique e tente novamente.');
-        }
-      }}
-    >
-      Verificar Código
-    </button>
+    <button className="botao_email" type="button" onClick={handleChave}>Verificar</button>
+    <button className="botao_email0" type="button" onClick={() => {setExpandir(false); setAguardandoCodigo(false);}}>Fechar</button>
   </>
 )}
           </form>
