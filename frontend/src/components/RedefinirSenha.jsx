@@ -35,7 +35,7 @@ export default function RedefinirSenha() {
   return (
     <div>
       <h2>Redefinir Senha</h2>
-      <form onSubmit={{alterarSenha}}>
+      <form onSubmit={alterarSenha}>
         <input type="password" placeholder="Nova senha" required />
         <button type="submit">Salvar nova senha</button>
       </form>
