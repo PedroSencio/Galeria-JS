@@ -15,6 +15,7 @@ export default function LoginTela () {
   const [codigoGerado, setCodigoGerado] = useState('');
   const [codigoDigitado, setCodigoDigitado] = useState('');
   const [aguardandoCodigo, setAguardandoCodigo] = useState(false);
+  const [loadingVerificacao, setLoadingVerificacao] = useState(false);
 
 
   function handleLogin(e) {
@@ -22,7 +23,8 @@ export default function LoginTela () {
       if (nomeLogin === ''|| senhaLogin === '')
           return alert('Campos vazios!');
       else
-          fetch('/login', { method: 'POST',
+          fetch('https://galeria-js.onrender.com/login', { 
+          method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ nome: nomeLogin, senha: senhaLogin })
       })
@@ -56,7 +58,7 @@ export default function LoginTela () {
       if (nomeCadastro === '' || senhaCadastro === '')
           return alert("Preencha todos os campos!");
       else
-          fetch('/usuarios', {
+          fetch('https://galeria-js.onrender.com/usuarios', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ nome: nomeCadastro, senha: senhaCadastro, email: emailCadastro })
@@ -113,6 +115,8 @@ export default function LoginTela () {
       return;
     }
 
+    setLoadingVerificacao(true); // Inicia o loading
+
     try {
       const resposta = await fetch('https://galeria-js.onrender.com/verificar-codigo', {
         method: 'POST',
@@ -139,6 +143,8 @@ export default function LoginTela () {
     } catch (erro) {
       console.error(erro);
       alert('Ocorreu um erro. Tente novamente mais tarde.');
+    } finally {
+      setLoadingVerificacao(false); // Finaliza o loading
     }
   }
 
@@ -146,6 +152,14 @@ export default function LoginTela () {
 
   return (
   <div className="sidebar">
+    <style>
+      {`
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+      `}
+    </style>
     {expandirBox ? (
       <div
         id="back"
@@ -188,9 +202,44 @@ export default function LoginTela () {
       type="text"
       className="codigoInput"
       placeholder="Código de verificação"
-      onChange={(e) => setCodigoDigitado(e.target.value)}
+      onChange={(e) => {
+        // Converte para maiúsculas e permite apenas letras e números
+        const valor = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+        setCodigoDigitado(valor);
+      }}
+      maxLength={4}
+      style={{ textTransform: 'uppercase' }}
     />
-    <button className="botao_email" type="button" onClick={handleChave}>Verificar</button>
+    <button 
+      className="botao_email" 
+      type="button" 
+      onClick={handleChave}
+      disabled={loadingVerificacao}
+      style={{
+        cursor: loadingVerificacao ? 'not-allowed' : 'pointer',
+        opacity: loadingVerificacao ? 0.7 : 1,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: '8px'
+      }}
+    >
+      {loadingVerificacao ? (
+        <>
+          <div style={{
+            width: '16px',
+            height: '16px',
+            border: '2px solid #f3f3f3',
+            borderTop: '2px solid #333',
+            borderRadius: '50%',
+            animation: 'spin 1s linear infinite'
+          }}></div>
+          Verificando...
+        </>
+      ) : (
+        'Verificar'
+      )}
+    </button>
     <button className="botao_email0" type="button" onClick={() => {setExpandir(false); setAguardandoCodigo(false);}}>Fechar</button>
   </>
 )}
